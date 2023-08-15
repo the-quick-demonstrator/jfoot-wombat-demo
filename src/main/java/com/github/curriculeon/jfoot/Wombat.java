@@ -1,7 +1,5 @@
 package com.github.curriculeon.jfoot;
 
-import com.github.git_leon.RandomUtils;
-
 import static com.github.curriculeon.jfoot.Direction.*;
 
 /**
@@ -17,13 +15,51 @@ public class Wombat extends Herbivore {
     }
 
     public void act() {
-        if (this.foundLeaf()) {
+        if (this.foundLeaf()) { // found leaf
             this.eatLeaf();
-        } else if (this.canMove()) {
+        } else if (this.canMove()) { // no leaf is found & can move
             this.move();
-        } else {
-            this.turnLeft();
+        } else { // no leaf is found and can't move
+            if (this.getDirection() == EAST) {
+                this.turnLeft();
+                this.move();
+                this.turnLeft();
+            } else if (this.getDirection() == WEST) { // NOT FACING EAST AND IS FACING WEST
+                this.turnRight();
+                this.move();
+                this.turnRight();
+            }
+
+            if (isAtTopLeft()) {
+                this.setDirection(SOUTH);
+            }
+
+            if(isAtBottomLeft()) {
+                this.setDirection(EAST);
+            }
         }
+    }
+
+    private boolean isAtBottomLeft() {
+        return !canMove(SOUTH) && canMove(EAST);
+    }
+
+    private boolean isAtTopLeft() {
+        return !canMove(NORTH) && !canMove(WEST);
+    }
+
+    private boolean canMove(Direction direction) {
+        Direction originalDirection = getDirection();
+        setDirection(direction);
+        boolean canMove = canMove();
+        setDirection(originalDirection);
+        return canMove;
+    }
+
+    public void turnRight() {
+        turnLeft();
+        turnLeft();
+        turnLeft();
     }
 
     public void turnLeft() {
